@@ -31,6 +31,113 @@ function shuffle(arr) {
 }
 function determinerForm(form) { return String(form).trim().split(/\s+/)[0]; }
 
+// Build three distractors from the SAME determiner paradigm. The correct
+// form is based on the noun's gender/number; the other two are deliberately
+// wrong forms of that same determiner. This keeps the exercise focused on
+// declension instead of mixing determiner families.
+const DETERMINER_PARADIGMS = {
+  definite: {
+    masculine: ['der', 'den', 'dem'],
+    feminine: ['die', 'die', 'der'],
+    neuter: ['das', 'das', 'dem'],
+    plural: ['die', 'die', 'den']
+  },
+  indefinite: {
+    masculine: ['ein', 'einen', 'einem'],
+    feminine: ['eine', 'eine', 'einer'],
+    neuter: ['ein', 'ein', 'einem'],
+    plural: []
+  },
+  kein: {
+    masculine: ['kein', 'keinen', 'keinem'],
+    feminine: ['keine', 'keine', 'keiner'],
+    neuter: ['kein', 'kein', 'keinem'],
+    plural: ['keine', 'keine', 'keinen']
+  },
+  mein: {
+    masculine: ['mein', 'meinen', 'meinem'],
+    feminine: ['meine', 'meine', 'meiner'],
+    neuter: ['mein', 'mein', 'meinem'],
+    plural: ['meine', 'meine', 'meinen']
+  },
+  dein: {
+    masculine: ['dein', 'deinen', 'deinem'],
+    feminine: ['deine', 'deine', 'deiner'],
+    neuter: ['dein', 'dein', 'deinem'],
+    plural: ['deine', 'deine', 'deinen']
+  },
+  sein: {
+    masculine: ['sein', 'seinen', 'seinem'],
+    feminine: ['seine', 'seine', 'seiner'],
+    neuter: ['sein', 'sein', 'seinem'],
+    plural: ['seine', 'seine', 'seinen']
+  },
+  ihr: {
+    masculine: ['ihr', 'ihren', 'ihrem'],
+    feminine: ['ihre', 'ihre', 'ihrer'],
+    neuter: ['ihr', 'ihr', 'ihrem'],
+    plural: ['ihre', 'ihre', 'ihren']
+  },
+  unser: {
+    masculine: ['unser', 'unseren', 'unserem'],
+    feminine: ['unsere', 'unsere', 'unserer'],
+    neuter: ['unser', 'unser', 'unserem'],
+    plural: ['unsere', 'unsere', 'unseren']
+  },
+  euer: {
+    masculine: ['euer', 'euren', 'eurem'],
+    feminine: ['eure', 'eure', 'eurer'],
+    neuter: ['euer', 'euer', 'eurem'],
+    plural: ['eure', 'eure', 'euren']
+  },
+  Ihr: {
+    masculine: ['Ihr', 'Ihren', 'Ihrem'],
+    feminine: ['Ihre', 'Ihre', 'Ihrer'],
+    neuter: ['Ihr', 'Ihr', 'Ihrem'],
+    plural: ['Ihre', 'Ihre', 'Ihren']
+  },
+  dieser: {
+    masculine: ['dieser', 'diesen', 'diesem'],
+    feminine: ['diese', 'diese', 'dieser'],
+    neuter: ['dieses', 'dieses', 'diesem'],
+    plural: ['diese', 'diese', 'diesen']
+  },
+  jener: {
+    masculine: ['jener', 'jenen', 'jenem'],
+    feminine: ['jene', 'jene', 'jener'],
+    neuter: ['jenes', 'jenes', 'jenem'],
+    plural: ['jene', 'jene', 'jenen']
+  },
+  welcher: {
+    masculine: ['welcher', 'welchen', 'welchem'],
+    feminine: ['welche', 'welche', 'welcher'],
+    neuter: ['welches', 'welches', 'welchem'],
+    plural: ['welche', 'welche', 'welchen']
+  }
+};
+
+function choiceLabels(q) {
+  const paradigm = DETERMINER_PARADIGMS[q.determiner]?.[q.noun.number === 'plural' ? 'plural' : q.noun.gender];
+  if (paradigm?.length) {
+    const unique = [...new Set(paradigm)];
+    // For feminine/neuter/plural paradigms, Nominative and Accusative can
+    // legitimately be identical. Replace the duplicate with a form from
+    // another gender, while keeping the same determiner family.
+    if (unique.length >= 3) return unique.slice(0, 3);
+    // Prefer the masculine Accusative as the extra distractor. This gives
+    // useful sets such as: keine / keiner / keinen, eine / einer / einen,
+    // diese / dieser / diesen, etc.
+    const masculine = DETERMINER_PARADIGMS[q.determiner]?.masculine || [];
+    const familyForms = [masculine[1], masculine[2], ...Object.values(DETERMINER_PARADIGMS[q.determiner] || {}).flat()];
+    for (const form of familyForms) {
+      if (form && !unique.includes(form)) unique.push(form);
+      if (unique.length === 3) break;
+    }
+    if (unique.length >= 3) return unique.slice(0, 3);
+  }
+  return [...new Set([q.forms.nom, q.forms.acc, q.forms.dat].map(determinerForm))];
+}
+
 function activeFilters() {
   const cases = [...document.querySelectorAll('.filter-case:checked')].map(x => x.value);
   const tags = [...document.querySelectorAll('.filter-tag:checked')].map(x => x.value);
@@ -65,8 +172,7 @@ function renderQuestion() {
   els.modeBadge.textContent = state.mode.toUpperCase();
   els.sentence.textContent = q.sentence;
   els.choices.innerHTML = '';
-  shuffle(q.choices).forEach(choice => {
-    const label = determinerForm(choice);
+  shuffle(choiceLabels(q)).forEach(label => {
     const b = document.createElement('button');
     b.className = 'choice';
     b.textContent = label;
