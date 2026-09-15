@@ -71,3 +71,10 @@ dialog::backdrop { background:rgba(15,23,42,.35); }
   .choice { padding:14px 5px; font-size:1rem; min-height:70px; }
   .sentence { min-height:90px; }
 }
+.filter-section { margin-top:16px; padding-top:14px; border-top:1px solid var(--border); }
+.filter-title { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:9px; }
+.filter-section label { display:inline-flex; align-items:center; gap:6px; margin:4px 12px 4px 0; font-size:.9rem; cursor:pointer; }
+.filter-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.filter-apply { margin-top:16px; width:100%; }
+@media (max-width:620px) { .filter-grid { grid-template-columns:1fr; } }
+.declension-table tr.current-case td { font-weight: 750; }

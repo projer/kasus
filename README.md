@@ -1,44 +1,30 @@
-# Kasus — German Case Trainer
+# KASUS — German Case Trainer
 
-A small static web app for practising **Nominative, Accusative and Dative** at approximately A2.1–A2.2 level.
+A small static web app for practicing German **Nominative, Accusative and Dative** at approximately A2.1–A2.2 level.
 
-## Current status
+## Features
 
-This is the first MVP scaffold. It contains the complete interaction model and 20 seed questions. The production question bank will be expanded to roughly 250 carefully reviewed questions.
-
-## Features already implemented
-
-- Three answer cards
-- Immediate correct/incorrect feedback
-- English explanations
-- Automatic explanations from question metadata
-- Case shown after answering
-- Optional gender hint before answering
-- LocalStorage progress
-- Accuracy tracking
-- Random / Mistakes / Unseen practice modes
+- 250 hard-coded practice questions
+- Three answer cards per question
+- Automatic English explanations
+- Automatic declension tables
+- Gender hint that does not reveal the case answer
+- Definite/indefinite articles, `kein`, possessives (`mein`, `dein`, `sein`, `ihr`, `unser`, `euer`, `Ihr`) and demonstratives (`dieser`, `jener`, `welcher`)
+- Adjectives and plural forms
+- Dative verbs and Accusative verbs
+- Dative, Accusative and two-way prepositions, including `aus, bei, mit, nach, seit, von, zu, für, durch, gegen, ohne, um`
+- `Wo?` / `Wohin?` practice for two-way prepositions
+- Present and Perfekt
+- LocalStorage progress tracking
+- Random, Mistakes and Unseen practice modes
+- Case/topic filters
 - Reset progress
-- Optional full declension table
-- Responsive mobile layout
+- Responsive layout for desktop and mobile
 
 ## Run locally
 
-No build step is required. Because the app uses ES modules, serve the folder with a local static server, for example:
+No build step is required. Serve the folder with any static HTTP server, or open `index.html` in a browser that supports ES modules.
 
-```bash
-python -m http.server 8000
-```
+## GitHub Pages
 
-Then open `http://localhost:8000`.
-
-## Deployment
-
-The project is intentionally static and can be hosted with GitHub Pages.
-
-## Next steps
-
-1. Review the interaction and visual design.
-2. Finalize the question data schema and automatic grammar explanation rules.
-3. Build and validate the full ~250-question bank.
-4. Add stronger validation for duplicate/ambiguous answer cards.
-5. Configure GitHub Pages.
+The repository can be published directly with **Settings → Pages → Deploy from a branch → main → /(root)**.

@@ -45,6 +45,26 @@
           <button data-mode="mistakes" class="mode-option">❌ Mistakes</button>
           <button data-mode="unseen" class="mode-option">✨ Unseen</button>
         </div>
+        <div class="filter-section">
+          <div class="filter-title">Cases</div>
+          <label><input type="checkbox" class="filter-case" value="Nominative" checked> Nominative</label>
+          <label><input type="checkbox" class="filter-case" value="Accusative" checked> Accusative</label>
+          <label><input type="checkbox" class="filter-case" value="Dative" checked> Dative</label>
+        </div>
+        <div class="filter-section">
+          <div class="filter-title">Topics</div>
+          <div class="filter-grid">
+            <label><input type="checkbox" class="filter-tag" value="adjective" checked> Adjectives</label>
+            <label><input type="checkbox" class="filter-tag" value="possessive" checked> Possessives</label>
+            <label><input type="checkbox" class="filter-tag" value="demonstrative" checked> Demonstratives</label>
+            <label><input type="checkbox" class="filter-tag" value="dative-verb" checked> Dative verbs</label>
+            <label><input type="checkbox" class="filter-tag" value="accusative-verb" checked> Accusative verbs</label>
+            <label><input type="checkbox" class="filter-tag" value="preposition" checked> Prepositions</label>
+            <label><input type="checkbox" class="filter-tag" value="two-way-preposition" checked> Two-way prepositions</label>
+            <label><input type="checkbox" class="filter-tag" value="perfect" checked> Perfect tense</label>
+          </div>
+        </div>
+        <button id="applyFilters" class="primary-button filter-apply">Apply filters</button>
       </div>
     </section>
   </main>
