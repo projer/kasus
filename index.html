@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="German Nominative, Accusative and Dative practice." />
+  <title>Kasus — German Case Trainer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="brand">KASUS</div>
+        <div class="subtitle">German Case Trainer</div>
+      </div>
+      <button id="settingsButton" class="icon-button" aria-label="Open settings">⚙</button>
+    </header>
+
+    <section class="stats-row" aria-label="Progress">
+      <span id="progressText">Question 1 / 20</span>
+      <span id="accuracyText">Accuracy: —</span>
+    </section>
+    <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+
+    <section id="trainer" class="trainer-card">
+      <div id="modeBadge" class="mode-badge">RANDOM</div>
+      <div id="sentence" class="sentence" aria-live="polite"></div>
+      <div id="choices" class="choices" role="group" aria-label="Answer choices"></div>
+      <button id="genderButton" class="help-button">💡 I don't know the gender</button>
+      <div id="genderHint" class="gender-hint hidden"></div>
+      <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+      <div id="explanation" class="explanation hidden"></div>
+      <div class="actions">
+        <button id="nextButton" class="primary-button hidden">Next sentence →</button>
+      </div>
+    </section>
+
+    <section class="practice-panel">
+      <button class="secondary-button" id="modeButton">Practice mode</button>
+      <div id="modePanel" class="mode-panel hidden">
+        <div class="mode-title">Practice</div>
+        <div class="mode-options">
+          <button data-mode="random" class="mode-option active">🔀 Random</button>
+          <button data-mode="mistakes" class="mode-option">❌ Mistakes</button>
+          <button data-mode="unseen" class="mode-option">✨ Unseen</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="settingsDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-header"><h2>Settings</h2><button value="cancel" class="close-button">×</button></div>
+      <p>Progress is stored locally in your browser.</p>
+      <button id="resetButton" type="button" class="danger-button">Reset all progress</button>
+      <button value="cancel" class="secondary-button">Close</button>
+    </form>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
