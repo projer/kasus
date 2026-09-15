@@ -1,4 +1,4 @@
-import { questions } from './data.js';
+import { questions } from './data.js?v=4';
 
 const STORAGE_KEY = 'kasus-trainer-v2';
 const state = {
@@ -8,6 +8,9 @@ const state = {
 };
 
 const $ = (id) => document.getElementById(id);
+function stripHtml(value) {
+  return String(value ?? '').replace(/<[^>]*>/g, '');
+}
 const els = {
   sentence: $('sentence'), choices: $('choices'), feedback: $('feedback'), explanation: $('explanation'),
   next: $('nextButton'), gender: $('genderButton'), genderHint: $('genderHint'),
@@ -39,14 +42,14 @@ function targetRemainder(q) {
 }
 
 function displaySentence(q) {
-  const source = String(q.sentence || '').trim();
-  const remainder = targetRemainder(q);
+  const source = stripHtml(String(q.sentence || '').trim());
+  const remainder = stripHtml(targetRemainder(q));
   if (!remainder || !source.includes('___')) return source;
 
-  // Some older entries contained only the blank (e.g. "___ kommt später.")
-  // even though the full target phrase is stored in forms/answer. Reconstruct
-  // the visible sentence so the learner always sees the adjective + noun.
-  return source.replace(/___/, `___${source.match(/___\s*/)?.[0]?.endsWith(' ') ? ' ' : ' '}${remainder}`);
+  // The blank represents the determiner only. Always show the rest of the
+  // target noun phrase (adjective + noun), even for legacy entries such as
+  // "___ kommt später.".
+  return source.replace('___', `___ ${remainder}`);
 }
 
 // Build three distractors from the SAME determiner paradigm. The correct
@@ -234,7 +237,7 @@ function buildExplanation(q) {
   const key = q.case === 'Nominative' ? 'nom' : q.case === 'Accusative' ? 'acc' : 'dat';
   const current = q.forms[key];
   let html = `<div class="case-title">${q.case.toUpperCase()}</div>`;
-  const trigger = q.trigger?.text || '';
+  const trigger = stripHtml(q.trigger?.text || '');
   const nounWord = `<strong>${escapeHtml(q.noun.word)}</strong>`;
   let triggerHtml = escapeHtml(trigger);
   if (q.trigger?.type === 'subject') {
