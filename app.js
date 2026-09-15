@@ -21,7 +21,15 @@ function getStat(id) { return state.stats[id] || { attempts: 0, correct: 0, last
 function updateStat(id, selected, correct) {
   const s = getStat(id); s.attempts++; if (correct) s.correct++; s.lastAnswer = selected; state.stats[id] = s; saveStats();
 }
-function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+function shuffle(arr) {
+  const result = [...arr];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+function determinerForm(form) { return String(form).trim().split(/\s+/)[0]; }
 
 function activeFilters() {
   const cases = [...document.querySelectorAll('.filter-case:checked')].map(x => x.value);
@@ -58,8 +66,12 @@ function renderQuestion() {
   els.sentence.textContent = q.sentence;
   els.choices.innerHTML = '';
   shuffle(q.choices).forEach(choice => {
-    const b = document.createElement('button'); b.className = 'choice'; b.textContent = choice;
-    b.addEventListener('click', () => answer(choice, b)); els.choices.appendChild(b);
+    const label = determinerForm(choice);
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = label;
+    b.addEventListener('click', () => answer(label, b));
+    els.choices.appendChild(b);
   });
   els.genderHint.classList.add('hidden'); els.genderHint.innerHTML = '';
   els.feedback.className = 'feedback hidden'; els.feedback.innerHTML = '';
@@ -116,13 +128,31 @@ function declensionTable(q) {
 }
 function showGender() { const q = state.current; els.genderHint.innerHTML = `<strong>${escapeHtml(q.noun.word)}</strong> → ${genderText(q.noun.gender)} (${genderArticle(q.noun.gender)} ${escapeHtml(q.noun.word)})`; els.genderHint.classList.remove('hidden'); }
 function answer(selected, button) {
-  if (state.answered) return; state.answered = true; const q = state.current; const correct = selected === q.answer;
+  if (state.answered) return;
+  state.answered = true;
+  const q = state.current;
+  const correctAnswer = determinerForm(q.answer);
+  const correct = selected === correctAnswer;
   updateStat(q.id, selected, correct);
-  [...els.choices.children].forEach(b => { b.disabled = true; if (b.textContent === q.answer) b.classList.add('missed'); });
-  if (correct) { button.classList.remove('missed'); button.classList.add('correct'); els.feedback.className = 'feedback correct'; els.feedback.textContent = '✓ Correct!'; }
-  else { button.classList.add('incorrect'); els.feedback.className = 'feedback incorrect'; els.feedback.innerHTML = `✗ Not quite — correct answer: <strong>${escapeHtml(q.answer)}</strong>`; }
-  els.explanation.className = 'explanation'; els.explanation.innerHTML = buildExplanation(q);
-  els.next.classList.remove('hidden'); els.gender.disabled = true; updateProgress();
+  [...els.choices.children].forEach(b => {
+    b.disabled = true;
+    if (b.textContent === correctAnswer) b.classList.add('missed');
+  });
+  if (correct) {
+    button.classList.remove('missed');
+    button.classList.add('correct');
+    els.feedback.className = 'feedback correct';
+    els.feedback.textContent = '✓ Correct!';
+  } else {
+    button.classList.add('incorrect');
+    els.feedback.className = 'feedback incorrect';
+    els.feedback.innerHTML = `✗ Not quite — correct answer: <strong>${escapeHtml(correctAnswer)}</strong>`;
+  }
+  els.explanation.className = 'explanation';
+  els.explanation.innerHTML = buildExplanation(q);
+  els.next.classList.remove('hidden');
+  els.gender.disabled = true;
+  updateProgress();
 }
 function setMode(mode) { state.mode = mode; newOrder(); document.querySelectorAll('.mode-option').forEach(b => b.classList.toggle('active', b.dataset.mode === mode)); renderQuestion(); }
 function applyFilters() { state.filters = activeFilters(); newOrder(); renderQuestion(); els.modePanel.classList.add('hidden'); }

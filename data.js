@@ -4,7 +4,7 @@ export const questions = [
     "sentence": "___ ist heute hier.",
     "choices": [
       "die Männer",
-      "den Männer",
+      "den Männern",
       "dem Männer"
     ],
     "answer": "die Männer",
@@ -19,7 +19,7 @@ export const questions = [
     "forms": {
       "nom": "die Männer",
       "acc": "die Männer",
-      "dat": "den Männer"
+      "dat": "den Männern"
     },
     "trigger": {
       "type": "subject",
@@ -5068,10 +5068,10 @@ export const questions = [
     "sentence": "Das Buch liegt auf ___.",
     "choices": [
       "die großen Tische",
-      "den großen Tische",
+      "den großen Tischen",
       "dem großen Tische"
     ],
-    "answer": "den großen Tische",
+    "answer": "den großen Tischen",
     "case": "Dative",
     "noun": {
       "word": "Tische",
@@ -5083,7 +5083,7 @@ export const questions = [
     "forms": {
       "nom": "die großen Tische",
       "acc": "die großen Tische",
-      "dat": "den großen Tische"
+      "dat": "den großen Tischen"
     },
     "trigger": {
       "type": "subject",
@@ -5329,10 +5329,10 @@ export const questions = [
     "sentence": "Das Auto steht vor ___.",
     "choices": [
       "die kurzen Häuser",
-      "den kurzen Häuser",
+      "den kurzen Häusern",
       "dem kurzen Häuser"
     ],
-    "answer": "den kurzen Häuser",
+    "answer": "den kurzen Häusern",
     "case": "Dative",
     "noun": {
       "word": "Häuser",
@@ -5344,7 +5344,7 @@ export const questions = [
     "forms": {
       "nom": "die kurzen Häuser",
       "acc": "die kurzen Häuser",
-      "dat": "den kurzen Häuser"
+      "dat": "den kurzen Häusern"
     },
     "trigger": {
       "type": "subject",
