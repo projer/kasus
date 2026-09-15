@@ -31,6 +31,24 @@ function shuffle(arr) {
 }
 function determinerForm(form) { return String(form).trim().split(/\s+/)[0]; }
 
+function targetRemainder(q) {
+  const caseKey = q.case === 'Nominative' ? 'nom' : q.case === 'Accusative' ? 'acc' : 'dat';
+  const phrase = String(q.forms?.[caseKey] || q.answer || '').trim();
+  const parts = phrase.split(/\s+/);
+  return parts.slice(1).join(' ');
+}
+
+function displaySentence(q) {
+  const source = String(q.sentence || '').trim();
+  const remainder = targetRemainder(q);
+  if (!remainder || !source.includes('___')) return source;
+
+  // Some older entries contained only the blank (e.g. "___ kommt später.")
+  // even though the full target phrase is stored in forms/answer. Reconstruct
+  // the visible sentence so the learner always sees the adjective + noun.
+  return source.replace(/___/, `___${source.match(/___\s*/)?.[0]?.endsWith(' ') ? ' ' : ' '}${remainder}`);
+}
+
 // Build three distractors from the SAME determiner paradigm. The correct
 // form is based on the noun's gender/number; the other two are deliberately
 // wrong forms of that same determiner. This keeps the exercise focused on
@@ -170,7 +188,7 @@ function renderQuestion() {
   if (!state.order.length || state.position >= state.order.length) newOrder();
   const q = getQuestion(); state.current = q; state.answered = false;
   els.modeBadge.textContent = state.mode.toUpperCase();
-  els.sentence.textContent = q.sentence;
+  els.sentence.textContent = displaySentence(q);
   els.choices.innerHTML = '';
   shuffle(choiceLabels(q)).forEach(label => {
     const b = document.createElement('button');
@@ -198,11 +216,12 @@ function escapeHtml(s) { return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;'
 
 function determinerLabel(d) {
   if (d === 'definite') return 'the definite article';
-  if (d === 'indefinite') return 'an indefinite article';
-  if (d === 'kein') return 'the negative determiner <em>kein</em>';
-  if (['mein','dein','sein','ihr','unser','euer','Ihr'].includes(d)) return `the possessive determiner <em>${d}</em>`;
-  return `the demonstrative/question determiner <em>${d}</em>`;
+  if (d === 'indefinite') return 'the indefinite article';
+  if (d === 'kein') return 'the negative determiner "kein"';
+  if (['mein','dein','sein','ihr','unser','euer','Ihr'].includes(d)) return `the possessive determiner "${d}"`;
+  return `the demonstrative/question determiner "${d}"`;
 }
+
 function endingInfo(q) {
   if (!q.adjective) return '';
   const form = q.forms[q.case === 'Nominative' ? 'nom' : q.case === 'Accusative' ? 'acc' : 'dat'];
@@ -215,7 +234,13 @@ function buildExplanation(q) {
   const key = q.case === 'Nominative' ? 'nom' : q.case === 'Accusative' ? 'acc' : 'dat';
   const current = q.forms[key];
   let html = `<div class="case-title">${q.case.toUpperCase()}</div>`;
-  html += `<p>${escapeHtml(q.trigger?.text || '')}</p>`;
+  const trigger = q.trigger?.text || '';
+  const nounWord = `<strong>${escapeHtml(q.noun.word)}</strong>`;
+  let triggerHtml = escapeHtml(trigger);
+  if (q.trigger?.type === 'subject') {
+    triggerHtml = `${nounWord} is the subject of the sentence, so the noun phrase is in the Nominative.`;
+  }
+  html += `<p>${triggerHtml}</p>`;
   html += `<p><strong>${escapeHtml(q.noun.word)}</strong> is a ${gender} noun. The target phrase is <strong>${escapeHtml(current)}</strong>.</p>`;
   html += `<p>${determinerLabel(q.determiner)} is declined for the ${q.case}.`;
   if (q.determiner === 'definite' || q.determiner === 'indefinite' || q.determiner === 'kein' || ['mein','dein','sein','ihr','unser','euer','Ihr'].includes(q.determiner) || ['dieser','jener','welcher'].includes(q.determiner)) {
